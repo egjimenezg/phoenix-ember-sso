@@ -10,6 +10,7 @@
           "isBaseBlueprint": true,
           "options": [
             "--ci-provider=github",
+            "--typescript",
             "--no-warp-drive"
           ]
         }

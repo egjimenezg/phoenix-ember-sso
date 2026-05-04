@@ -8,6 +8,14 @@ import {
 export default {
   plugins: [
     [
+      '@babel/plugin-transform-typescript',
+      {
+        allExtensions: true,
+        onlyRemoveTypeImports: true,
+        allowDeclareFields: true,
+      },
+    ],
+    [
       'babel-plugin-ember-template-compilation',
       {
         enableLegacyModules: [
