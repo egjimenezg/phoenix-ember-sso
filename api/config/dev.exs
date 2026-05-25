@@ -10,6 +10,8 @@ config :sso_server, SsoServer.Repo,
   show_sensitive_data_on_connection_error: true,
   pool_size: 10
 
+config :sso_server, :google_oauth,
+  client_id: System.get_env("GOOGLE_CLIENT_ID"),
 # For development, we disable any cache and enable
 # debugging and code reloading.
 #

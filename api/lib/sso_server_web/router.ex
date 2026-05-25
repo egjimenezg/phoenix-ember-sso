@@ -5,8 +5,16 @@ defmodule SsoServerWeb.Router do
     plug :accepts, ["json"]
   end
 
+  pipeline :oauth do
+    plug :fetch_session
+  end
+
   scope "/api", SsoServerWeb do
     pipe_through :api
+  end
+
+  scope "/auth", SsoServerWeb do
+    pipe_through :oauth
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
