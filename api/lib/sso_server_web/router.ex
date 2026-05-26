@@ -15,6 +15,8 @@ defmodule SsoServerWeb.Router do
 
   scope "/auth", SsoServerWeb do
     pipe_through :oauth
+
+    get "/google", Api.SessionController, :request
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development

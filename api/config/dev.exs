@@ -14,6 +14,7 @@ config :sso_server, :google_oauth,
   client_id: System.get_env("GOOGLE_CLIENT_ID"),
   client_secret: System.get_env("GOOGLE_CLIENT_SECRET"),
   redirect_uri: System.get_env("OAUTH_REDIRECT_URI", "http://localhost:4000/auth/google/callback")
+
 # For development, we disable any cache and enable
 # debugging and code reloading.
 #
