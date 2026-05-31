@@ -8,10 +8,12 @@ const UserSchema = {
   },
   legacy: true,
   fields: [
-    { kind: 'field', name: 'name' },
+    { kind: 'field', name: 'firstName' },
     { kind: 'field', name: 'middleName' },
     { kind: 'field', name: 'lastName' },
     { kind: 'field', name: 'secondLastName' },
     { kind: 'field', name: 'email' }
   ]
 } satisfies ResourceSchema;
+
+

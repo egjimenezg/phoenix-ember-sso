@@ -23,7 +23,8 @@ config :sso_server, SsoServerWeb.Endpoint,
 config :sso_server, :google_oauth,
   client_id: "test-client-id",
   client_secret: "test-client-secret",
-  redirect_uri: "http://localhost:4002/auth/google/callback"
+  redirect_uri: "http://localhost:4002/auth/google/callback",
+  base_url: System.get_env("OAUTH_MOCK_BASE_URL", "https://accounts.google.com")
 
 # In test we don't send emails
 config :sso_server, SsoServer.Mailer, adapter: Swoosh.Adapters.Test

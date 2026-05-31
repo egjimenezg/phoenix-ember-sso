@@ -3,8 +3,11 @@ defmodule SsoServer.Repo.Migrations.CreateUsers do
 
   def change do
     create table(:users) do
-      add :email, :string
-      add :name, :string
+      add :email, :string, null: false
+      add :first_name, :string, null: false
+      add :middle_name, :string
+      add :last_name, :string
+      add :second_last_name, :string
 
       timestamps(type: :utc_datetime)
     end
