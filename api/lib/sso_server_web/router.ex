@@ -17,6 +17,7 @@ defmodule SsoServerWeb.Router do
     pipe_through :oauth
 
     get "/google", Api.SessionController, :request
+    get "/google/callback", Api.SessionController, :callback
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development

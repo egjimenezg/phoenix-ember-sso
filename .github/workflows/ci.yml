@@ -26,6 +26,20 @@ jobs:
         ports:
           - 5432:5432
 
+      oauth_mock:
+        image: ghcr.io/navikt/mock-oauth2-server:4.0.0
+        ports:
+          - 8090:8080
+        env:
+          SERVER_PORT: 8080
+          JSON_CONFIG: >-
+            {"interactiveLogin":false,"httpServer":"NettyWrapper","tokenCallbacks":[{"issuerId":"google","tokenExpiry":3600,"requestMappings":[{"requestParam":"scope","match":"openid","claims":{"sub":"107418193","email":"testuser@example.com","name":"Test User","given_name":"Test","family_name":"User","email_verified":true}}]}]}
+        options: >-
+          --health-cmd "wget -qO /dev/null http://localhost:8080/google/.well-known/openid-configuration"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     defaults:
       run:
         working-directory: api
@@ -65,4 +79,6 @@ jobs:
         run: mix ecto.migrate
 
       - name: Run tests
-        run: mix test
+        run: mix test --include integration
+        env:
+          OAUTH_MOCK_BASE_URL: http://localhost:8090/google
