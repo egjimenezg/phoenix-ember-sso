@@ -21,6 +21,7 @@ module.exports = function (environment) {
   };
 
   if (environment === 'development') {
+    ENV.apiHost = 'http://localhost:4000';
     // ENV.APP.LOG_RESOLVER = true;
     // ENV.APP.LOG_ACTIVE_GENERATION = true;
     // ENV.APP.LOG_TRANSITIONS = true;
@@ -31,6 +32,7 @@ module.exports = function (environment) {
   if (environment === 'test') {
     // Testem prefers this...
     ENV.locationType = 'none';
+    ENV.apiHost = 'http://localhost:4000';
 
     // keep test console output quieter
     ENV.APP.LOG_ACTIVE_GENERATION = false;
@@ -42,6 +44,7 @@ module.exports = function (environment) {
 
   if (environment === 'production') {
     // here you can enable a production-specific feature
+    ENV.apiHost = 'http://localhost:4000';
   }
 
   return ENV;
