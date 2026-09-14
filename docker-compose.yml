@@ -27,7 +27,7 @@ services:
               "tokenExpiry": 3600,
               "requestMappings": [
                 {
-                  "requestParam": "scope",
+                  "requestParam": "code",
                   "match": "*",
                   "claims": {
                     "sub": "107418193",

@@ -75,7 +75,7 @@ export default class AuthSignIn extends Component {
               required
             />
           </div>
-          <button class="btn btn-primary btn-block sign">Sign in</button>
+          <button class="btn btn-primary btn-block sign" type="submit">Sign in</button>
         </form>
       </section>
     </main>

@@ -9,7 +9,8 @@ import Config
 
 config :sso_server,
   ecto_repos: [SsoServer.Repo],
-  generators: [timestamp_type: :utc_datetime]
+  generators: [timestamp_type: :utc_datetime],
+  frontend_url: "http://localhost:4200"
 
 # Configure the endpoint
 config :sso_server, SsoServerWeb.Endpoint,

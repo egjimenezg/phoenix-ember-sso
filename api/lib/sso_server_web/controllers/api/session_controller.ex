@@ -4,6 +4,7 @@ defmodule SsoServerWeb.Api.SessionController do
   alias Assent.Strategy.OIDC
   alias SsoServer.Accounts
 
+  @doc "Starts OIDC sign-in by storing callback state and redirecting to the provider."
   def request(conn, _params) do
     oauth_config()
     |> OIDC.authorize_url()
@@ -34,7 +35,8 @@ defmodule SsoServerWeb.Api.SessionController do
           {:ok, user} ->
             conn
             |> delete_session(:oauth_state)
-            |> json(%{user: %{id: user.id, email: user.email, first_name: user.first_name, last_name: user.last_name}})
+            |> put_session(:user_id, user.id)
+            |> redirect(external: Application.fetch_env!(:sso_server, :frontend_url))
 
           {:error, changeset} ->
             conn

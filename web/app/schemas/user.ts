@@ -16,4 +16,3 @@ const UserSchema = {
   ]
 } satisfies ResourceSchema;
 
-

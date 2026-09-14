@@ -1,6 +1,9 @@
 defmodule SsoServerWeb.Api.SessionControllerTest do
   use SsoServerWeb.ConnCase, async: true
 
+  alias SsoServer.Accounts.User
+  alias SsoServer.Repo
+
   test "GET /auth/google redirects to the OAuth authorization endpoint", %{conn: conn} do
     conn = get(conn, "/auth/google")
 
@@ -29,9 +32,11 @@ defmodule SsoServerWeb.Api.SessionControllerTest do
       |> Plug.Test.init_test_session(%{oauth_state: session_params})
       |> get("/auth/google/callback", %{"code" => code, "state" => state})
 
-    assert %{"user" => user} = json_response(conn_callback, 200)
-    assert user["email"] == "testuser@example.com"
-    assert user["first_name"] == "Test"
-    assert user["last_name"] == "User"
+    assert redirected_to(conn_callback, 302) == "http://localhost:4200"
+
+    user = Repo.get_by!(User, email: "testuser@example.com")
+
+    assert get_session(conn_callback, :user_id) == user.id
+    refute get_session(conn_callback, :oauth_state)
   end
 end
