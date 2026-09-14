@@ -21,6 +21,20 @@ defmodule SsoServerWeb.Api.SessionController do
     end
   end
 
+  @doc "Returns the user associated with the current session."
+  def show(conn, _params) do
+    case get_session(conn, :user_id) do
+      nil ->
+        unauthorized(conn)
+
+      user_id ->
+        case Accounts.get_user(user_id) do
+          nil -> unauthorized(conn)
+          user -> json(conn, %{user: user_json(user)})
+        end
+    end
+  end
+
   def callback(conn, params) do
     session_params = get_session(conn, :oauth_state) || %{}
 
@@ -62,5 +76,20 @@ defmodule SsoServerWeb.Api.SessionController do
       authorization_params: [scope: "openid email profile"],
       client_authentication_method: "client_secret_post"
     ]
+  end
+
+  defp unauthorized(conn) do
+    conn
+    |> put_status(:unauthorized)
+    |> json(%{error: "Not authenticated"})
+  end
+
+  defp user_json(user) do
+    %{
+      id: user.id,
+      email: user.email,
+      first_name: user.first_name,
+      last_name: user.last_name
+    }
   end
 end

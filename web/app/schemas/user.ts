@@ -16,3 +16,4 @@ const UserSchema = {
   ]
 } satisfies ResourceSchema;
 
+export default UserSchema;

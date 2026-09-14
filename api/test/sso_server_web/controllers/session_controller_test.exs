@@ -2,7 +2,46 @@ defmodule SsoServerWeb.Api.SessionControllerTest do
   use SsoServerWeb.ConnCase, async: true
 
   alias SsoServer.Accounts.User
+  alias SsoServer.Accounts
   alias SsoServer.Repo
+
+  describe "GET /api/session" do
+    test "returns the authenticated user", %{conn: conn} do
+      {:ok, %{id: user_id}} = Accounts.find_or_create_from_oauth(%{
+        "email" => "signed-in@example.com",
+        "given_name" => "Signed",
+        "family_name" => "In"
+      })
+
+      conn =
+        conn
+        |> Plug.Test.init_test_session(%{user_id: user_id})
+        |> get("/api/session")
+
+      assert %{
+              "user" => %{
+                "id" => ^user_id,
+                "email" => "signed-in@example.com",
+                "first_name" => "Signed",
+                "last_name" => "In"
+              }
+      } = json_response(conn, 200)
+    end
+
+    test "returns unauthorized without a session", %{conn: conn} do
+      conn = get(conn, "/api/session")
+      assert %{"error" => "Not authenticated"} = json_response(conn, 401)
+    end
+
+    test "returns unauthorized when the session user no longer exists", %{conn: conn} do
+      conn =
+        conn
+        |> Plug.Test.init_test_session(%{user_id: 0})
+        |> get("/api/session")
+
+      assert %{"error" => "Not authenticated"} = json_response(conn, 401)
+    end
+  end
 
   test "GET /auth/google redirects to the OAuth authorization endpoint", %{conn: conn} do
     conn = get(conn, "/auth/google")

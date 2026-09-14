@@ -2,6 +2,10 @@ defmodule SsoServer.Accounts do
   alias SsoServer.Repo
   alias SsoServer.Accounts.User
 
+  @doc "Gets a user by ID."
+  @spec get_user(integer()) :: User.t() | nil
+  def get_user(id), do: Repo.get(User, id)
+
   @doc """
   Finds or create a user from OAuth attributes.
 
