@@ -7,11 +7,12 @@ defmodule SsoServerWeb.Api.SessionControllerTest do
 
   describe "GET /api/session" do
     test "returns the authenticated user", %{conn: conn} do
-      {:ok, %{id: user_id}} = Accounts.find_or_create_from_oauth(%{
-        "email" => "signed-in@example.com",
-        "given_name" => "Signed",
-        "family_name" => "In"
-      })
+      {:ok, %{id: user_id}} =
+        Accounts.find_or_create_from_oauth(%{
+          "email" => "signed-in@example.com",
+          "given_name" => "Signed",
+          "family_name" => "In"
+        })
 
       conn =
         conn
@@ -19,13 +20,13 @@ defmodule SsoServerWeb.Api.SessionControllerTest do
         |> get("/api/session")
 
       assert %{
-              "user" => %{
-                "id" => ^user_id,
-                "email" => "signed-in@example.com",
-                "first_name" => "Signed",
-                "last_name" => "In"
-              }
-      } = json_response(conn, 200)
+               "user" => %{
+                 "id" => ^user_id,
+                 "email" => "signed-in@example.com",
+                 "first_name" => "Signed",
+                 "last_name" => "In"
+               }
+             } = json_response(conn, 200)
     end
 
     test "returns unauthorized without a session", %{conn: conn} do
@@ -46,7 +47,18 @@ defmodule SsoServerWeb.Api.SessionControllerTest do
   test "GET /auth/google redirects to the OAuth authorization endpoint", %{conn: conn} do
     conn = get(conn, "/auth/google")
 
-    assert redirected_to(conn, 302) =~ "accounts.google.com"
+    redirect_uri =
+      conn
+      |> redirected_to(302)
+      |> URI.parse()
+
+    provider_uri =
+      :sso_server
+      |> Application.fetch_env!(:google_oauth)
+      |> Keyword.fetch!(:base_url)
+      |> URI.parse()
+
+    assert redirect_uri.host == provider_uri.host
     assert get_session(conn, :oauth_state)
   end
 
@@ -70,6 +82,9 @@ defmodule SsoServerWeb.Api.SessionControllerTest do
       conn
       |> Plug.Test.init_test_session(%{oauth_state: session_params})
       |> get("/auth/google/callback", %{"code" => code, "state" => state})
+
+    assert conn_callback.status == 302,
+           "expected OAuth callback to redirect, got: #{conn_callback.resp_body}"
 
     assert redirected_to(conn_callback, 302) == "http://localhost:4200"
 

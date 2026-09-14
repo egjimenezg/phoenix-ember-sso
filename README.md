@@ -1,6 +1,72 @@
 # Phoenix + Ember: OAuth & JWT Authentication
 
-Implements authentication for a Phoenix + Ember application using two strategies: SSO via Google OAuth 2.0/OIDC and local authentication with JWT for direct username/password login.
+Implements authentication for a Phoenix + Ember application using two strategies: SSO via Google OAuth 2.0/OIDC and local authentication wit
+h JWT for direct username/password login.
+
+## Running Locally
+
+### Prerequisites
+
+- Docker with Docker Compose
+- Elixir `~> 1.15` and a compatible Erlang/OTP version
+- Node.js 20 or newer with npm
+- A Google OAuth client for testing Google sign-in
+
+Configure the Google OAuth client with this authorized redirect URI:
+
+```text
+http://localhost:4000/auth/google/callback
+```
+
+### First-time setup
+
+Start PostgreSQL from the repository root:
+
+```bash
+docker compose up -d db
+```
+
+Install dependencies and prepare the development database:
+
+```bash
+cd api
+mix setup
+
+cd ../web
+npm install
+```
+
+### Start the Phoenix API
+
+In one terminal:
+
+```bash
+cd api
+export GOOGLE_CLIENT_ID="your-google-client-id"
+export GOOGLE_CLIENT_SECRET="your-google-client-secret"
+mix phx.server
+```
+
+The API runs at [http://localhost:4000](http://localhost:4000). Keep the credentials in environment variables and do not commit them.
+
+### Start the Ember app
+
+In another terminal:
+
+```bash
+cd web
+npm run start
+```
+
+Open [http://localhost:4200](http://localhost:4200). Visiting `/` redirects to `/sign-in`, and the Google button starts the OIDC flow through the Phoenix API.
+
+### Stop PostgreSQL
+
+From the repository root:
+
+```bash
+docker compose stop db
+```
 
 ## OAuth 2.0 Key Concepts
 
@@ -52,7 +118,8 @@ sequenceDiagram
     end
 
     Phoenix->>Phoenix: Delete temporary OAuth state
-    Phoenix-->>User: 200 JSON containing user profile
+    Phoenix->>Phoenix: Store local user ID in signed session cookie
+    Phoenix-->>User: 302 redirect to Ember
 
-    Note over Ember,Phoenix: Not implemented yet:<br/>callback redirect to Ember,<br/>application session or JWT issuance,<br/>and authenticated API requests
+    Note over Ember,Phoenix: Implemented:<br/>GET /api/session returns the session user.<br/>Not implemented yet:<br/>Ember session restoration, protected API requests,<br/>logout, and local JWT authentication.
 ```
