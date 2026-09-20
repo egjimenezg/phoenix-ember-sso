@@ -281,3 +281,42 @@ a {
   color: var(--color-accent-300);
   font-weight: 400;
 }
+
+/***************************
+AUTHENTICATED SESSION
+****************************/
+.session-page {
+  display: grid;
+  place-items: center;
+  min-height: 100vh;
+  padding: var(--space-8);
+}
+
+.session-card {
+  width: min(100%, 520px);
+  padding: 48px;
+  border: 1px solid var(--color-divider);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-md);
+  text-align: center;
+}
+
+.session-card h1 {
+  margin: 0 0 var(--space-2);
+  font-family: var(--font-heading);
+  font-size: 30px;
+}
+
+.session-card .btn {
+  margin-top: var(--space-8);
+}
+
+.session-eyebrow {
+  margin: 0 0 var(--space-4);
+  color: var(--color-accent-300);
+  font-family: ui-monospace, Menlo, monospace;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}

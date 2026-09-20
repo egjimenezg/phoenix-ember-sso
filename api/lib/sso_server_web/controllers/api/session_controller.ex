@@ -21,18 +21,30 @@ defmodule SsoServerWeb.Api.SessionController do
     end
   end
 
-  @doc "Returns the user associated with the current session."
+  @doc "Returns the user associated with the current session"
   def show(conn, _params) do
-    case get_session(conn, :user_id) do
+    conn =
+      conn
+      |> put_resp_header("cache-control", "no-store")
+      |> put_resp_content_type("application/vnd.api+json")
+
+    conn
+    |> get_session(:user_id)
+    |> case do
       nil ->
         unauthorized(conn)
 
       user_id ->
-        case Accounts.get_user(user_id) do
-          nil -> unauthorized(conn)
-          user -> json(conn, %{user: user_json(user)})
-        end
+        respond_with_session_user(conn, user_id)
     end
+  end
+
+  @doc "Logs out by deleting the current application session."
+  def delete(conn, _params) do
+    conn
+    |> clear_session()
+    |> configure_session(drop: true)
+    |> send_resp(:no_content, "")
   end
 
   def callback(conn, params) do
@@ -78,18 +90,34 @@ defmodule SsoServerWeb.Api.SessionController do
     ]
   end
 
+  defp respond_with_session_user(conn, user_id) do
+    case Accounts.get_user(user_id) do
+      nil ->
+        unauthorized(conn)
+
+      user ->
+        json(conn, %{
+          data: user_resource(user),
+          meta: %{csrfToken: get_csrf_token()}
+        })
+    end
+  end
+
   defp unauthorized(conn) do
     conn
     |> put_status(:unauthorized)
-    |> json(%{error: "Not authenticated"})
+    |> json(%{errors: [%{status: "401", title: "Not authenticated"}]})
   end
 
-  defp user_json(user) do
+  defp user_resource(user) do
     %{
-      id: user.id,
-      email: user.email,
-      first_name: user.first_name,
-      last_name: user.last_name
+      type: "user",
+      id: to_string(user.id),
+      attributes: %{
+        email: user.email,
+        firstName: user.first_name,
+        lastName: user.last_name
+      }
     }
   end
 end

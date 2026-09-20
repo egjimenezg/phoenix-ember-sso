@@ -12,6 +12,10 @@ config :sso_server,
   generators: [timestamp_type: :utc_datetime],
   frontend_url: "http://localhost:4200"
 
+config :cors_plug,
+  origin: ["http://localhost:4200"],
+  credentials: true
+
 # Configure the endpoint
 config :sso_server, SsoServerWeb.Endpoint,
   url: [host: "localhost"],

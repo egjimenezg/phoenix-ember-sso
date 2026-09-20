@@ -41,6 +41,7 @@ defmodule SsoServer.MixProject do
     [
       {:assent, "~> 0.3.1"},
       {:certifi, "~> 2.12"},
+      {:cors_plug, "~> 3.0"},
       {:bandit, "~> 1.5"},
       {:dns_cluster, "~> 0.2.0"},
       {:ecto_sql, "~> 3.13"},

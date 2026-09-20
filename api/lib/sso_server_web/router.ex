@@ -4,6 +4,7 @@ defmodule SsoServerWeb.Router do
   pipeline :api do
     plug :accepts, ["json"]
     plug :fetch_session
+    plug :protect_from_forgery
   end
 
   pipeline :oauth do
@@ -12,7 +13,9 @@ defmodule SsoServerWeb.Router do
 
   scope "/api", SsoServerWeb do
     pipe_through :api
+
     get "/session", Api.SessionController, :show
+    delete "/session", Api.SessionController, :delete
   end
 
   scope "/auth", SsoServerWeb do

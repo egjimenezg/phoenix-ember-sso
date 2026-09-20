@@ -58,7 +58,7 @@ cd web
 npm run start
 ```
 
-Open [http://localhost:4200](http://localhost:4200). Visiting `/` redirects to `/sign-in`, and the Google button starts the OIDC flow through the Phoenix API.
+Open [http://localhost:4200](http://localhost:4200). Visiting `/` shows your name, email, and a **Log out** button when signed in; otherwise it redirects to `/sign-in`. The Google button starts the OIDC flow through the Phoenix API. On return, Ember reads `/api/session` with the session cookie to display the authenticated home page. Refreshing the page restores the session; logging out clears it and returns to sign-in.
 
 ### Stop PostgreSQL
 
@@ -121,5 +121,13 @@ sequenceDiagram
     Phoenix->>Phoenix: Store local user ID in signed session cookie
     Phoenix-->>User: 302 redirect to Ember
 
-    Note over Ember,Phoenix: Implemented:<br/>GET /api/session returns the session user.<br/>Not implemented yet:<br/>Ember session restoration, protected API requests,<br/>logout, and local JWT authentication.
+    Ember->>Phoenix: GET /api/session with session cookie
+    Phoenix-->>Ember: User profile and CSRF token
+    Ember->>Ember: Display authenticated home page
+    User->>Ember: Select Log out
+    Ember->>Phoenix: DELETE /api/session with cookie and CSRF token
+    Phoenix-->>Ember: Clear session cookie and return 204
+    Ember->>Ember: Clear local session and display sign-in
+
+    Note over Ember,Phoenix: Local username/password and JWT authentication remain unimplemented.
 ```
